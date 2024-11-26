@@ -1,7 +1,10 @@
+@font-face {
+  font-family: 'Jersey 10';
+  src: url('/fonts/Jersey_10/Jersey10-Regular.ttf');
+}
+
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  font-family: 'Jersey 10', monospace;
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
@@ -11,47 +14,35 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+  --background: #FFFFFF;
+  --onBackground: #1D1D1D;
+  --surface: #F7F7F7;
+  --onSurface: #919191;
+  --outline: #C4C4C4;
+  --error: #D62424;
+
+  --headlineLarge: 42px;
+  --headlineMedium: 36px;
+  --headlineSmall: 28px;
+  --titleLarge: 24px;
+  --titleMedium: 20px;
+  --titleSmall: 18px;
+  --bodyLarge: 16px;
+  --bodyMedium: 14px;
+  --bodySmall: 12px;
+  --labelLarge: 14px;
+  --labelMedium: 12px;
+  --labelSmall: 12px;
+
 }
 
 body {
   margin: 0;
   display: flex;
   place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  width: 100vw;
+  height: 100vh;
 }
 
 @media (prefers-color-scheme: light) {
@@ -59,10 +50,17 @@ button:focus-visible {
     color: #213547;
     background-color: #ffffff;
   }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--onSurface);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--surface);
 }
