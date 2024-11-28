@@ -23,3 +23,5 @@ class Game {
         this.difficulty = difficulty
     }
 }
+
+export default Game;

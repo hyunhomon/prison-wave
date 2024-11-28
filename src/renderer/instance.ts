@@ -9,6 +9,15 @@ class Instance {
     private _cameraFriction: number = 5;
     private _debugger: Graphics = new Graphics();
     private _tileSize: number = 0;
+    private _keymap: Set<string> = new Set();
+    private _buttonmap: Set<number> = new Set();
+    private _keydownFn: Map<string, (...args: any[]) => void> = new Map();
+    private _keyupFn: Map<string, (...args: any[]) => void> = new Map();
+    private _keypressedFn: Map<string, (...args: any[]) => void> = new Map();
+    private _buttondownFn: Map<number, (...args: any[]) => void> = new Map();
+    private _buttonupFn: Map<number, (...args: any[]) => void> = new Map();
+    private _buttonpressedFn: Map<number, (...args: any[]) => void> = new Map();
+    private _cursorPosition: Point = {x: 0, y: 0};
     loaded: boolean = false;
     constructor(){
 
@@ -65,6 +74,14 @@ class Instance {
             this._cameraPosition.x * this._tileSize,
             this._cameraPosition.y * this._tileSize
         );
+        // keypressed
+        this._keymap.forEach(key => {
+            if(this._keypressedFn.has(key)) this._keypressedFn.get(key)?.call(this);
+        });
+        // buttonpressed
+        this._buttonmap.forEach(button => {
+            if(this._buttonpressedFn.has(button)) this._buttonpressedFn.get(button)?.call(this, this._cursorPosition);
+        });
     }
 
     resize(){
@@ -78,6 +95,45 @@ class Instance {
             sprite.position.set(x * this._tileSize, y * this._tileSize);
         });
     };
+    isKeydown(key: string):boolean{return this._keymap.has(key)}
+    isButtondown(button: number):boolean{return this._buttonmap.has(button)}
+    addResizeEvent(element: Window){element.addEventListener("resize", this.resize.bind(this))}
+    removeResizeEvent(element: Window){element.removeEventListener("resize", this.resize.bind(this))}
+    keydown(e: KeyboardEvent){
+        this._keymap.add(e.key);
+        if(this._keydownFn.has(e.key)) this._keydownFn.get(e.key)?.call(this, e);
+    }
+    keyup(e: KeyboardEvent){
+        this._keymap.delete(e.key);
+        if(this._keyupFn.has(e.key)) this._keyupFn.get(e.key)?.call(this, e);
+    }
+    updateCursorPos(e: MouseEvent){
+        this._cursorPosition.x = (e.offsetX - innerWidth / 2 + this._cameraPosition.x * this._tileSize) / this._tileSize;
+        this._cursorPosition.y = (e.offsetY - innerHeight / 2 + this._cameraPosition.y * this._tileSize) / this._tileSize;
+    }
+    buttondown(e: MouseEvent){
+        this._buttonmap.add(e.button);
+        this.updateCursorPos(e);
+        if(this._buttondownFn.has(e.button)) this._buttondownFn.get(e.button)?.call(this, {...this._cursorPosition});
+    }
+    buttonup(e: MouseEvent){
+        this._buttonmap.delete(e.button);
+        this.updateCursorPos(e);
+        if(this._buttonupFn.has(e.button)) this._buttonupFn.get(e.button)?.call(this, {...this._cursorPosition});
+    }
+    mousemove(e: MouseEvent){
+        this.updateCursorPos(e);
+    }
+    addKeydownEvent(element: Document){element.addEventListener("keydown", this.keydown.bind(this))}
+    removeKeydownEvent(element: Document){element.removeEventListener("keydown", this.keydown.bind(this))}
+    addKeyupEvent(element: Document){element.addEventListener("keyup", this.keyup.bind(this))}
+    removeKeyupEvent(element: Document){element.removeEventListener("keyup", this.keyup.bind(this))}
+    addButtondownEvent(canvas: HTMLCanvasElement = this._app.canvas){canvas.addEventListener("mousedown", this.buttondown.bind(this))}
+    removeButtondownEvent(canvas: HTMLCanvasElement = this._app.canvas){canvas.removeEventListener("mousedown", this.buttondown.bind(this))}
+    addButtonupEvent(canvas: HTMLCanvasElement = this._app.canvas){canvas.addEventListener("mouseup", this.buttonup.bind(this))}
+    removeButtonupEvent(canvas: HTMLCanvasElement = this._app.canvas){canvas.removeEventListener("mouseup", this.buttonup.bind(this))}
+    addMousemoveEvent(canvas: HTMLCanvasElement = this._app.canvas){canvas.addEventListener("mousemove", this.mousemove.bind(this))}
+    removeMousemoveEvent(canvas: HTMLCanvasElement = this._app.canvas){canvas.removeEventListener("mousemove", this.mousemove.bind(this))}
     addTicker(fn: TickerCallback<any>, context?: any, priority?: number):Ticker{return this._app.ticker.add(fn, context, priority)}
     spawn(entityId: string, opt:any, _category:string = 'entities', _extender: string = 'svg'){
         const _sprite = new Sprite(Assets.get(`/assets/${_category}/${opt.tag}.${_extender}`));

@@ -32,7 +32,7 @@ const Details = styled.div<{showAll:boolean;}>`
     overflow-x: hidden;
     overflow-y: ${props => props.showAll ? 'auto' : 'hidden'};
     max-height: 50vh;
-    padding: 1.5rem;
+    padding: 1.2rem;
     border-radius: 10px;
     border: 1px solid var(--outline);
     position: relative;
@@ -43,6 +43,7 @@ const Details = styled.div<{showAll:boolean;}>`
         color: ${props => props.showAll ? 'var(--onSurface)' : 'var(--error)'};
         word-wrap: break-word;
         text-align: left;
+        margin: 0;
     }
     div{
         color: var(--onBackgrouond);
@@ -211,7 +212,7 @@ const Main = (props:{
                     <p>{showDetails ? details() :
                         "You're a prisoner in a high-security prison! Face off against other inmates and guards as you plan your escape! Start on the first floor and make your way to the sixth floor. The higher you go, the tougher the inmates and guards you'll encounter. Gather items and allies to take them on and secure your freedom!"
                     }</p>
-                    {!showDetails && <a onClick={e => setShowDetails(true)}>details =&gt;</a>}
+                    {!showDetails && <a onClick={() => setShowDetails(true)}>details =&gt;</a>}
                 </>}
             </Details>
             {showDifficulty ? <ButtonBox>

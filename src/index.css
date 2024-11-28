@@ -3,8 +3,12 @@
   src: url('/fonts/Jersey_10/Jersey10-Regular.ttf');
 }
 
-:root {
+*{
+  box-sizing: border-box;
   font-family: 'Jersey 10', monospace;
+}
+
+:root {
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
