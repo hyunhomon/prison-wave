@@ -4,8 +4,9 @@ import Main from "./scenes/main";
 
 const App = () => {
     const [scene, setScene] = useState<string>("main");
+    const [gameDifficulty, setGameDifficulty] = useState<number>(0);
     return (<>
-        {scene === "main" ? <Main setScene={setScene} /> : <Game />}
+        {scene === "main" ? <Main setScene={setScene} setGameDifficulty={setGameDifficulty} /> : <Game difficulty={gameDifficulty}/>}
     </>);
 }
 

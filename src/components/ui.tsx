@@ -63,10 +63,10 @@ export const Interface = (props:{
             <Box margin="1rem 1rem 2rem">
                 <h1>cost: 20/40</h1>
             </Box>
-            <Box margin="1rem 0.5rem 2rem" button>
+            <Box margin="1rem 0.5rem 2rem" button={true}>
                 <img src="assets/icons/users.svg" alt="" width={iconSize} height={iconSize}/>
             </Box>
-            <Box margin="1rem 0.5rem 2rem" button onClick={() => props.setInvOpen(!props.invOpen)}>
+            <Box margin="1rem 0.5rem 2rem" button={true} onClick={() => props.setInvOpen(!props.invOpen)}>
                 <img src="assets/icons/inventory.svg" alt="" width={iconSize} height={iconSize}/>
             </Box>
         </UIScreen>
@@ -80,7 +80,7 @@ const ItemContainer = styled.div`
     align-items: start;
     flex-wrap: wrap;
     width: 24rem;
-    height: 10rem;
+    height: 16rem;
     @media screen and (max-width: 768px) {
         width: 90vw;
         max-width: 90vw;
@@ -171,7 +171,7 @@ export const Inventory = (props:{
             <Box padding="0" gap="0">
                 <ItemContainer>
                     {props.inventory.map((item, index) => {
-                        return <Box key={index} selected={index == selected} onClick={() => setSelected(index)} button>
+                        return <Box key={index} selected={index == selected} onClick={() => setSelected(index)} button={true}>
                             <img src={item.id} alt="" width={30} height={30}/>
                         </Box>
                     })}

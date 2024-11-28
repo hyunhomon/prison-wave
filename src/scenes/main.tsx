@@ -188,7 +188,8 @@ const details = () => {
 }
 
 const Main = (props:{
-    setScene: React.Dispatch<React.SetStateAction<string>>
+    setScene: React.Dispatch<React.SetStateAction<string>>;
+    setGameDifficulty: React.Dispatch<React.SetStateAction<number>>;
 }) => {
     const [showDifficulty, setShowDifficulty] = useState<boolean>(false);
     const [showDetails, setShowDetails] = useState<boolean>(false);
@@ -216,7 +217,13 @@ const Main = (props:{
                 </>}
             </Details>
             {showDifficulty ? <ButtonBox>
-                <Button onClick={() => props.setScene('game')}>Let's go</Button>
+                <Button onClick={() => {
+                    props.setGameDifficulty(
+                        choosedDifficulty === "easy" ? 0 :
+                        choosedDifficulty === "normal" ? 1 : 2
+                    );
+                    props.setScene('game')}
+                }>Let's go</Button>
                 <NoneButton onClick={() => {
                     setShowDifficulty(false);
                     setShowDetails(false);
