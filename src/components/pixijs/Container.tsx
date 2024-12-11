@@ -1,28 +1,28 @@
-// app/components/Camera.tsx
+// app/components/pixijs/Camera.tsx
 
 import { useEffect, useRef } from "react";
 import { ParentProvider, useParent } from "../../contexts/ParentContext";
 import * as PIXI from "pixi.js"
 import { toFilter } from "../../utils/filter";
-import { Transform } from "../../utils/modules";
 import { usePixel } from "./Scene";
 
-interface ContainerProps {
-    transform?: Transform;
-    filters?: Filter[];
+interface ContainerProps extends ObjectProps {
     children: React.ReactNode;
 }
 
-const Container = ({ children, transform = new Transform(), filters = [] }:ContainerProps) => {
+const Container = ({ id, children, position = [0, 0], rotation = 0, scale = [1, 1], alpha = 1, pivot = [0, 0], blendMode, mask, filters = [] }:ContainerProps) => {
     const parent = useParent();
     const pixel = usePixel();
-    const containerRef = useRef<PIXI.Container>(new PIXI.Container());
+    const containerRef = useRef<PIXI.Container | null>(null);
 
     useEffect(() => {
         if(containerRef.current){
             containerRef.current.destroy();
         }
         const container = new PIXI.Container();
+        container.label = id || "Container";
+        container.blendMode = blendMode || "";
+        if(mask) container.mask = parent.children.find((child) => child.label === mask) as PIXI.Graphics;
         containerRef.current = container;
         parent.addChild(container);
         return () => {
@@ -34,17 +34,38 @@ const Container = ({ children, transform = new Transform(), filters = [] }:Conta
     }, [parent])
 
     useEffect(() => {
-        if(containerRef.current){
-            containerRef.current.position.set(transform.position[0] * pixel, transform.position[1] * pixel);
-            containerRef.current.scale.set(transform.scale[0], transform.scale[1]);
-            containerRef.current.rotation = transform.rotation;
-            containerRef.current.alpha = transform.alpha;
-            containerRef.current.pivot.set(transform.pivot[0] * pixel, transform.pivot[1] * pixel);
-            containerRef.current.filters = filters.map((filter:Filter) => toFilter(filter.type, filter.data));
-        }
-    }, [transform, filters, pixel])
+        if (containerRef.current) containerRef.current.position.set(position[0] * pixel, position[1] * pixel);
+    }, [position, pivot, pixel]);
 
-    return <ParentProvider container={containerRef.current}>{children}</ParentProvider>
+    useEffect(() => {
+        if (containerRef.current) containerRef.current.pivot.set(pivot[0] * pixel, pivot[1] * pixel);
+    }, [pivot, pixel]);
+    
+    useEffect(() => {
+        if(containerRef.current) containerRef.current.rotation = rotation;
+    }, [rotation])
+    
+    useEffect(() => {
+        if(containerRef.current) containerRef.current.scale.set(scale[0], scale[1]);
+    }, [scale])
+
+    useEffect(() => {
+        if(containerRef.current) containerRef.current.alpha = alpha;
+    }, [alpha])
+
+    useEffect(() => {
+        if(containerRef.current) containerRef.current.filters = filters.map((filter:Filter) => toFilter(filter.type, filter.data));
+    }, [filters])
+
+    useEffect(() => {
+        if(containerRef.current) containerRef.current.blendMode = blendMode || "";
+    }, [blendMode])
+
+    useEffect(() => {
+        if(containerRef.current && mask) containerRef.current.mask = parent.children.find((child) => child.label === mask) as PIXI.Graphics;
+    }, [mask])
+
+    return <ParentProvider container={containerRef.current || new PIXI.Container()}>{children}</ParentProvider>
 }
 
 export default Container;

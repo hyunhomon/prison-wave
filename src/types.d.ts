@@ -58,6 +58,20 @@ interface ObjectState{
     id: string; // id of the object
     transform: Transform; // transform of the object
     filters: Filter[]; // filters of the object
+    blendMode: PIXI.BLEND_MODES | ""; // blend mode of the object
+    mask: string; // object id for masking
+}
+
+interface ObjectProps{
+    id?: string;
+    position?: Vector2;
+    rotation?: number;
+    scale?: Vector2;
+    alpha?: number;
+    pivot?: Vector2;
+    filters?: Filter[];
+    blendMode?: PIXI.BLEND_MODES;
+    mask?: string; // object id for masking
 }
 
 interface Point{

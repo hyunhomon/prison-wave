@@ -1,4 +1,4 @@
-// app/components/Scene.tsx
+// app/components/pixijs/Scene.tsx
 
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import * as PIXI from "pixi.js";
@@ -10,6 +10,7 @@ interface SceneProps {
     height: number;
     background: number;
     pixelSize?: number;
+    using?: string[];
 }
 
 const PixelContext = createContext<number|null>(null);
@@ -22,13 +23,13 @@ export const usePixel = () => {
     return context;
 };
 
-const Scene = ({ children, width, height, background, pixelSize }:SceneProps) => {
+const Scene = ({ children, width, height, background, pixelSize, using = [] }:SceneProps) => {
     const divRef = useRef<HTMLDivElement>(null);
     const appRef = useRef<PIXI.Application | null>(null);
     const [initialized, setInitialized] = useState<boolean>(false);
 
     useEffect(() => {
-        PIXI.Assets.load(["assets/tiles.png"]).then(() => {
+        PIXI.Assets.load(using).then(() => {
             const app = new PIXI.Application();
             app.init({
                 width, height,
@@ -39,8 +40,11 @@ const Scene = ({ children, width, height, background, pixelSize }:SceneProps) =>
                 if (divRef.current) {
                     divRef.current.appendChild(app.canvas);
                     appRef.current = app;
+                    console.log(appRef.current);
                     return () => {
                         divRef.current?.removeChild(app.canvas)
+                        app.destroy();
+                        app.canvas.remove();
                     }
                 }
                 return () => {
@@ -57,14 +61,14 @@ const Scene = ({ children, width, height, background, pixelSize }:SceneProps) =>
     }, [background]);
 
     useEffect(() => {
-        if (appRef.current && initialized) {
+        if (appRef.current) {
             appRef.current.renderer.resize(width, height);
         }
     }, [width, height, initialized]);
 
     return (<PixelContext.Provider value={pixelSize || 64} >
         <ParentProvider container={appRef.current?.stage || new PIXI.Container()}>
-            <div ref={divRef} />
+            <div ref={divRef} style={{overflow: "hidden", position: "relative"}} />
             {initialized && children}
         </ParentProvider>
     </PixelContext.Provider>);

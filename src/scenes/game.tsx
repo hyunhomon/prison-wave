@@ -9,7 +9,6 @@ import Scene from "../components/pixijs/Scene";
 import { useWindowSize } from "usehooks-ts";
 import Camera from "../components/pixijs/Camera";
 import Sprite from "../components/pixijs/Sprite";
-import { Transform } from "../utils/modules";
 
 const GameComponent = (props:{
     difficulty:number;
@@ -25,33 +24,22 @@ const GameComponent = (props:{
     useOnce(async () => {
         setLoaded(true);
 
-        game.current.playerInventory = [
-            new Item('assets/icons/users.svg', 'hyunho\'s ddong', 'jinseok will be like it. probably..'),
-            new Item('assets/icons/users.svg', 'hyunho\'s ddong', 'jinseok will be like it. probably..'),
-            new Item('assets/icons/users.svg', 'hyunho\'s ddong', 'jinseok will be like it. probably..'),
-            new Item('assets/icons/users.svg', 'hyunho\'s ddong', 'jinseok will be like it. probably..'),
-            new Item('assets/icons/users.svg', 'hyunho\'s ddong', 'jinseok will be like it. probably..'),
-            new Item('assets/icons/users.svg', 'hyunho\'s ddong', 'jinseok will be like it. probably..'),
-            new Item('assets/icons/users.svg', 'hyunho\'s ddong', 'jinseok will be like it. probably..'),
-            new Item('assets/icons/users.svg', 'hyunho\'s ddong', 'jinseok will be like it. probably..'),
-            new Item('assets/icons/users.svg', 'hyunho\'s ddong', 'jinseok will be like it. probably..'),
-            new Item('assets/icons/users.svg', 'hyunho\'s ddong', 'jinseok will be like it. probably..'),
-            new Item('assets/icons/users.svg', 'hyunho\'s ddong', 'jinseok will be like it. probably..'),
-        ]
-        setInventory(game.current.playerInventory);
-
-        const _tilemap = [
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        ]
+        // game.current.playerInventory = [
+        //     new Item('assets/icons/users.svg', 'hyunho\'s ddong', 'jinseok will be like it. probably..'),
+        //     new Item('assets/icons/users.svg', 'hyunho\'s ddong', 'jinseok will be like it. probably..'),
+        //     new Item('assets/icons/users.svg', 'hyunho\'s ddong', 'jinseok will be like it. probably..'),
+        //     new Item('assets/icons/users.svg', 'hyunho\'s ddong', 'jinseok will be like it. probably..'),
+        //     new Item('assets/icons/users.svg', 'hyunho\'s ddong', 'jinseok will be like it. probably..'),
+        //     new Item('assets/icons/users.svg', 'hyunho\'s ddong', 'jinseok will be like it. probably..'),
+        //     new Item('assets/icons/users.svg', 'hyunho\'s ddong', 'jinseok will be like it. probably..'),
+        //     new Item('assets/icons/users.svg', 'hyunho\'s ddong', 'jinseok will be like it. probably..'),
+        //     new Item('assets/icons/users.svg', 'hyunho\'s ddong', 'jinseok will be like it. probably..'),
+        //     new Item('assets/icons/users.svg', 'hyunho\'s ddong', 'jinseok will be like it. probably..'),
+        //     new Item('assets/icons/users.svg', 'hyunho\'s ddong', 'jinseok will be like it. probably..'),
+        // ]
+        // setInventory(game.current.playerInventory);
+        game.current.floor.generateMap();
+        const _tilemap = game.current.floor.map;
         setTilemap(_tilemap);
         return () => {
         }
@@ -61,9 +49,11 @@ const GameComponent = (props:{
     }, [loaded]);
 
     return loaded ? <Screen ref={screenRef}>
-        <Scene background={0x000000} width={width} height={height} pixelSize={64}>
+        <Scene background={0x000000} width={width} height={height} pixelSize={64} using={[
+            "assets/tiles.png"
+        ]}>
             <Camera screenWidth={width} screenHeight={height}>
-                {tilemap.map((row, y) => row.map((tile, x) => <Sprite key={`${x}-${y}`} texture="assets/tiles.png" transform={new Transform([x, y], 0, [1, 1], 0, [.5, .5])}></Sprite>))}
+                {tilemap.map((row, y) => row.map((tile:number, x) => <Sprite key={`${x}-${y}`} texture="assets/tiles.png" position={[x, y]} scale={[1, 1]} />))}
             </Camera>
         </Scene>
         <Interface invOpen={inventoryOpen} setInvOpen={setInventoryOpen}></Interface>

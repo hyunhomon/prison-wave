@@ -1,20 +1,17 @@
-// app/components/Text.tsx
+// app/components/pixijs/Text.tsx
 
 import { useEffect, useRef } from "react";
 import * as PIXI from "pixi.js";
 import { useParent } from "../../contexts/ParentContext";
 import { toFilter } from "../../utils/filter";
-import { Transform } from "../../utils/modules";
 import { usePixel } from "./Scene";
 
-interface TextProps {
-    transform?: Transform;
-    filters?: Filter[];
+interface TextProps extends ObjectProps {
     text: string;
-    style: PIXI.TextStyle;
+    style: PIXI.TextStyleOptions;
 }
 
-const Text = ({ transform = new Transform(), filters = [], text, style }:TextProps) => {
+const Text = ({ id, position = [0, 0], rotation = 0, alpha = 1, pivot = [.5, .5], filters = [], blendMode, mask, text, style }:TextProps) => {
     const parent = useParent();
     const pixel = usePixel();
     const textRef = useRef<PIXI.Text | null>(null);
@@ -23,7 +20,14 @@ const Text = ({ transform = new Transform(), filters = [], text, style }:TextPro
         if (textRef.current) {
             textRef.current.destroy();
         }
-        const textSprite = new PIXI.Text(text, style);
+        const textStyle = new PIXI.TextStyle(style);
+        textStyle.fontSize = textStyle.fontSize * pixel;
+        const textSprite = new PIXI.Text();
+        textSprite.text = text;
+        textSprite.style = textStyle;
+        textSprite.label = id || "Text";
+        textSprite.blendMode = blendMode || "";
+        if(mask) textSprite.mask = parent.children.find((child) => child.label === mask) as PIXI.Graphics;
         textRef.current = textSprite;
         parent.addChild(textSprite);
         return () => {
@@ -33,27 +37,42 @@ const Text = ({ transform = new Transform(), filters = [], text, style }:TextPro
             }
         };
     }, [parent]);
+    
+    useEffect(() => {
+        if (textRef.current) textRef.current.position.set(position[0] * pixel, position[1] * pixel);
+    }, [position, pixel]);
+    
+    useEffect(() => {
+        if(textRef.current) textRef.current.rotation = rotation;
+    }, [rotation])
 
     useEffect(() => {
-        if (textRef.current) {
-            textRef.current.position.set(transform.position[0] * pixel, transform.position[1] * pixel);
-            textRef.current.rotation = transform.rotation;
-            textRef.current.alpha = transform.alpha;
-            textRef.current.anchor.set(transform.pivot[0], transform.pivot[1]);
-            textRef.current.filters = filters.map((filter:Filter) => toFilter(filter.type, filter.data));
-        }
-    }, [transform, filters, pixel]);
+        if(textRef.current) textRef.current.alpha = alpha;
+    }, [alpha])
+    
+    useEffect(() => {
+        if(textRef.current) textRef.current.anchor.set(pivot[0], pivot[1]);
+    }, [pivot])
 
     useEffect(() => {
         if (textRef.current) {
             textRef.current.text = text;
-            textRef.current.style = {
-                ...textRef.current.style,
-                ...style,
-                fontSize: style.fontSize * pixel
-            };
+            textRef.current.style = new PIXI.TextStyle(style);
+            textRef.current.style.fontSize = textRef.current.style.fontSize * pixel;
         }
     }, [text, style]);
+
+    useEffect(() => {
+        if(textRef.current) textRef.current.filters = filters.map((filter:Filter) => toFilter(filter.type, filter.data));
+    }, [filters])
+
+    useEffect(() => {
+        if(textRef.current) textRef.current.blendMode = blendMode || "";
+    }, [blendMode])
+
+    useEffect(() => {
+        if(textRef.current && mask) textRef.current.mask = parent.children.find((child) => child.label === mask) as PIXI.Graphics;
+    }, [mask])
 
     return null;
 };
