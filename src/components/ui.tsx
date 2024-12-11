@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import Item from "../lib/Item";
+import Item from "../lib/ItemTemplates";
 import { useState } from "react";
 import { useOnce } from "../utils/hooks";
 

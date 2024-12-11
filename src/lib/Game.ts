@@ -1,19 +1,25 @@
-import Ally from "./Ally"
-import Enemy from "./Enemy"
+import Ally from "./entity/Ally"
 import Floor from "./Floor"
-import Item from "./Item"
+import Guard from "./entity/Guard";
+import Prisoner from "./entity/Prisoner";
+import Player from "./controller/Player";
+import Enemy from "./controller/Enemy";
 
 class Game {
     difficulty: number;
     floor: Floor;
     currentFloor: number = 1;
-    givenCost: number = 0;
-    allies: Ally[] = [];
-    enemies: Enemy[] = [];
-    playerCost: number = 0;
-    playerInventory: Item[] = [];
 
-    turn: string = '' // 턴을 소유한 엔티티의 id
+    player: Player = new Player();
+    enemy: Enemy = new Enemy();
+
+    allies: Ally[] = [];
+    guards: Guard[] = [];
+    prisoners: Prisoner[] = [];
+    items: Item[] = [];
+
+    cost: number = 0;
+    turn: string = '';
 
     constructor(
         difficulty: number

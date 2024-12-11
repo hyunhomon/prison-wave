@@ -4,7 +4,7 @@ import Loading from "../components/loading";
 import { useOnce } from "../utils/hooks";
 import { Interface, Inventory } from "../components/ui";
 import Game from "../lib/Game";
-import Item from "../lib/Item";
+import Item from "../lib/ItemTemplates";
 import Scene from "../components/pixijs/Scene";
 import { useWindowSize } from "usehooks-ts";
 import Camera from "../components/pixijs/Camera";

@@ -30,8 +30,8 @@ class Floor {
         this.generateRooms();
         this.connectRooms();
     }
-    spawnEnemies() {}
-    spawnItems() {}
+    placeItems() {}
+    spawnEntities() {}
 
     private generateRooms() {
         let current = 0;

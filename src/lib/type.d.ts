@@ -1,6 +1,3 @@
-enum EnemyTag { inmate, guard }
-enum ItemTag { stat, companion }
-
 interface Position {
     x: number;
     y: number;
@@ -15,7 +12,12 @@ interface Room {
 interface Stat {
     atk: number;
     def: number;
-    hp: number;
+    health: number;
     critical: number; 
     speed: number;
+}
+interface Item {
+    name: string;
+    description: string;
+    stat: Stat;
 }
