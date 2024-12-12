@@ -1,3 +1,8 @@
+import Ally from "./entity/Ally";
+import Guard from "./entity/Guard";
+import Prisoner from "./entity/Prisoner";
+import Placement from "./Placement";
+
 class Floor {
     map: number[][] = [[]];
     rooms: Room[] = [];
@@ -5,40 +10,42 @@ class Floor {
     endPoint: Position = { x: 0, y: 0 };
     dist: number = 0;
 
-    width: number;
-    height: number;
-    minRoomSize: number;
-    maxRoomSize: number;
-    density: number;
-
-    constructor(
+    generateMap(
         width: number,
         height: number,
         minRoomSize: number,
         maxRoomSize: number,
-        density: number = 0.3
+        density: number
     ) {
-        this.width = width;
-        this.height = height;
-        this.minRoomSize = minRoomSize;
-        this.maxRoomSize = maxRoomSize;
-        this.density = density;
-    }
-
-    generateMap() {
-        this.map = Array.from({ length: this.height }, () => Array(this.width).fill(1));
-        this.generateRooms();
+        this.map = Array.from({ length: height }, () => Array(width).fill(1));
+        this.generateRooms(width, height, minRoomSize, maxRoomSize, density);
         this.connectRooms();
     }
-    placeItems() {}
-    spawnEntities() {}
+    placeItems(
+        placements: Placement[],
+        itemCount: number
+    ) {
+        for (let i=0;i<itemCount;i++) {}
+    }
+    spawnEntities(
+        prisoners: Prisoner[],
+        entityCount: number
+    ) {
+        for (let i=0;i<entityCount;i++) {}
+    }
 
-    private generateRooms() {
+    private generateRooms(
+        width: number,
+        height: number,
+        minRoomSize: number,
+        maxRoomSize: number,
+        density: number
+    ) {
         let current = 0;
-        while (current / (this.width*this.height) < this.density) {
-            const size = Math.floor(Math.random() * (this.maxRoomSize-this.minRoomSize+1)) + this.minRoomSize;
-            const x = Math.floor(Math.random() * (this.width - size));
-            const y = Math.floor(Math.random() * (this.height - size));
+        while (current / (width*height) < density) {
+            const size = Math.floor(Math.random() * (maxRoomSize-minRoomSize+1)) + minRoomSize;
+            const x = Math.floor(Math.random() * (width - size));
+            const y = Math.floor(Math.random() * (height - size));
             const newRoom: Room = {
                 x: x,
                 y: y,
@@ -49,8 +56,8 @@ class Floor {
 
             let cnt = 0;
 
-            for (let i=y;i<Math.min(y+size, this.height);i++) {
-                for (let j=x;j<Math.min(x+size, this.width);j++) {
+            for (let i=y;i<Math.min(y+size, height);i++) {
+                for (let j=x;j<Math.min(x+size, width);j++) {
                     if (this.map[i][j] === 1) {
                         this.map[i][j] = 0;
                         cnt += 1;
